@@ -1,5 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "ForestBrawl.io - Orman Savas Oyunu",
@@ -22,7 +28,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#3a7d1e",
+  themeColor: "#0a0f0a",
 };
 
 export default function RootLayout({
@@ -31,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className="h-full">
-      <body className="h-full overflow-hidden bg-[#3a7d1e]">{children}</body>
+    <html lang="tr" className={`h-full ${inter.variable}`}>
+      <body className="h-full overflow-x-hidden bg-background font-sans antialiased">{children}</body>
     </html>
   );
 }
