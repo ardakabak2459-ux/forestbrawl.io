@@ -11,8 +11,9 @@ COPY artifacts/api-server/.replit-artifact ./artifacts/api-server/.replit-artifa
 COPY artifacts/forestbrawl ./artifacts/forestbrawl
 
 WORKDIR /app/artifacts/api-server
-RUN npm install
-RUN npm run build
+RUN npm install -g pnpm
+RUN pnpm install
+RUN pnpm run build
 
 FROM node:20-alpine AS runtime
 WORKDIR /app
