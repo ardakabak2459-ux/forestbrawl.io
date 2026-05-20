@@ -20,7 +20,6 @@ import {
   UserPlus,
   LogIn,
   Sparkles,
-  Timer,
   Target,
   Flame,
   Crosshair,
@@ -30,8 +29,15 @@ import {
   TrendingUp,
   Medal,
   Gem,
-  Axe,
   CircleDot,
+  ShoppingBag,
+  User,
+  Palette,
+  X,
+  Check,
+  Lock,
+  Coins,
+  Play,
 } from "lucide-react";
 
 // Character data with detailed info
@@ -44,9 +50,9 @@ const characters = [
     speed: 60, 
     defense: 90,
     color: "#8B5A2B",
-    gradient: "from-amber-700 to-amber-900",
     unlocked: true,
-    description: "Guclu ve dayanikli"
+    description: "Guclu ve dayanikli",
+    price: 0,
   },
   { 
     id: "fox", 
@@ -56,9 +62,9 @@ const characters = [
     speed: 95, 
     defense: 50,
     color: "#FF6B35",
-    gradient: "from-orange-500 to-red-600",
     unlocked: true,
-    description: "Hizli ve kurnaz"
+    description: "Hizli ve kurnaz",
+    price: 0,
   },
   { 
     id: "wolf", 
@@ -68,9 +74,9 @@ const characters = [
     speed: 85, 
     defense: 70,
     color: "#6B7280",
-    gradient: "from-slate-500 to-slate-700",
     unlocked: true,
-    description: "Olumcul yirtici"
+    description: "Olumcul yirtici",
+    price: 0,
   },
   { 
     id: "owl", 
@@ -80,9 +86,9 @@ const characters = [
     speed: 70, 
     defense: 65,
     color: "#7C3AED",
-    gradient: "from-violet-500 to-purple-700",
     unlocked: false,
-    description: "Gizemli sihirbaz"
+    description: "Gizemli sihirbaz",
+    price: 2500,
   },
   { 
     id: "rabbit", 
@@ -92,9 +98,9 @@ const characters = [
     speed: 100, 
     defense: 40,
     color: "#EC4899",
-    gradient: "from-pink-400 to-pink-600",
     unlocked: true,
-    description: "En hizli savasci"
+    description: "En hizli savasci",
+    price: 0,
   },
   { 
     id: "deer", 
@@ -104,10 +110,26 @@ const characters = [
     speed: 80, 
     defense: 85,
     color: "#D97706",
-    gradient: "from-amber-500 to-amber-700",
     unlocked: false,
-    description: "Asil savunucu"
+    description: "Asil savunucu",
+    price: 3500,
   },
+];
+
+const skins = [
+  { id: "golden", name: "Altin Zirh", rarity: "Efsanevi", price: 5000, owned: false },
+  { id: "shadow", name: "Golge Pelerin", rarity: "Epik", price: 2500, owned: true },
+  { id: "forest", name: "Orman Kamuflaj", rarity: "Nadir", price: 1000, owned: true },
+  { id: "fire", name: "Ates Efekti", rarity: "Epik", price: 3000, owned: false },
+  { id: "ice", name: "Buz Kristali", rarity: "Nadir", price: 1500, owned: false },
+  { id: "neon", name: "Neon Isik", rarity: "Siradan", price: 500, owned: true },
+];
+
+const shopItems = [
+  { id: 1, name: "Altin Paketi", type: "currency", amount: "5000", price: "$4.99", icon: Coins, popular: true },
+  { id: 2, name: "Elmas Paketi", type: "currency", amount: "500", price: "$2.99", icon: Gem, popular: false },
+  { id: 3, name: "Sezon Pasi", type: "pass", price: "$9.99", icon: Crown, popular: true },
+  { id: 4, name: "Karakter Paketi", type: "bundle", price: "$14.99", icon: Users, popular: false },
 ];
 
 const leaderboardData = [
@@ -116,6 +138,9 @@ const leaderboardData = [
   { rank: 3, name: "AyiBaba", score: 10891, kills: 128, character: "bear" },
   { rank: 4, name: "GolgeNinja", score: 9876, kills: 115, character: "rabbit" },
   { rank: 5, name: "KurtAdam99", score: 8654, kills: 98, character: "wolf" },
+  { rank: 6, name: "Yildiz_TR", score: 7432, kills: 87, character: "fox" },
+  { rank: 7, name: "SavasCi01", score: 6521, kills: 76, character: "bear" },
+  { rank: 8, name: "ProGamer", score: 5890, kills: 65, character: "wolf" },
 ];
 
 const liveFeed = [
@@ -139,30 +164,22 @@ function BearCharacter({ size = 120, isSelected = false }: { size?: number; isSe
           <feDropShadow dx="0" dy="4" stdDeviation="3" floodOpacity="0.3" />
         </filter>
       </defs>
-      {/* Body */}
       <ellipse cx="60" cy="85" rx="35" ry="30" fill="url(#bearFur)" filter="url(#bearShadow)" />
-      {/* Head */}
       <circle cx="60" cy="45" r="32" fill="url(#bearFur)" />
-      {/* Ears */}
       <circle cx="35" cy="22" r="12" fill="#8B5A2B" />
       <circle cx="85" cy="22" r="12" fill="#8B5A2B" />
       <circle cx="35" cy="22" r="7" fill="#D4A574" />
       <circle cx="85" cy="22" r="7" fill="#D4A574" />
-      {/* Face */}
       <ellipse cx="60" cy="55" rx="18" ry="14" fill="#D4A574" />
-      {/* Eyes */}
       <ellipse cx="48" cy="42" rx="6" ry="7" fill="white" />
       <ellipse cx="72" cy="42" rx="6" ry="7" fill="white" />
       <circle cx="49" cy="43" r="4" fill="#1a1a2e" />
       <circle cx="73" cy="43" r="4" fill="#1a1a2e" />
       <circle cx="50" cy="42" r="1.5" fill="white" />
       <circle cx="74" cy="42" r="1.5" fill="white" />
-      {/* Nose */}
       <ellipse cx="60" cy="52" rx="7" ry="5" fill="#1a1a2e" />
       <ellipse cx="58" cy="51" rx="2" ry="1.5" fill="#444" />
-      {/* Mouth */}
       <path d="M 52 60 Q 60 66 68 60" stroke="#5D4037" strokeWidth="2" fill="none" />
-      {/* Warrior mark */}
       <path d="M 55 32 L 60 28 L 65 32" stroke="#22c55e" strokeWidth="2" fill="none" />
     </svg>
   );
@@ -177,21 +194,15 @@ function FoxCharacter({ size = 120, isSelected = false }: { size?: number; isSel
           <stop offset="100%" stopColor="#D64933" />
         </linearGradient>
       </defs>
-      {/* Body */}
       <ellipse cx="60" cy="88" rx="30" ry="25" fill="url(#foxFur)" />
-      {/* Tail */}
       <path d="M 85 85 Q 110 70 105 55 Q 100 45 90 55 Q 85 65 88 80" fill="url(#foxFur)" />
       <path d="M 100 55 Q 95 50 92 58" fill="white" />
-      {/* Head */}
       <ellipse cx="60" cy="45" rx="28" ry="25" fill="url(#foxFur)" />
-      {/* Ears */}
       <polygon points="35,35 25,5 45,25" fill="url(#foxFur)" />
       <polygon points="85,35 95,5 75,25" fill="url(#foxFur)" />
       <polygon points="35,32 30,15 42,27" fill="#1a1a2e" />
       <polygon points="85,32 90,15 78,27" fill="#1a1a2e" />
-      {/* White face */}
       <ellipse cx="60" cy="55" rx="16" ry="18" fill="white" />
-      {/* Eyes */}
       <ellipse cx="48" cy="42" rx="7" ry="8" fill="white" />
       <ellipse cx="72" cy="42" rx="7" ry="8" fill="white" />
       <ellipse cx="49" cy="43" rx="4" ry="5" fill="#22c55e" />
@@ -200,12 +211,9 @@ function FoxCharacter({ size = 120, isSelected = false }: { size?: number; isSel
       <circle cx="73" cy="43" r="2.5" fill="#1a1a2e" />
       <circle cx="50" cy="42" r="1" fill="white" />
       <circle cx="74" cy="42" r="1" fill="white" />
-      {/* Nose */}
       <ellipse cx="60" cy="56" rx="5" ry="4" fill="#1a1a2e" />
-      {/* Mouth */}
       <path d="M 60 60 L 60 65" stroke="#1a1a2e" strokeWidth="1.5" />
       <path d="M 53 65 Q 60 70 67 65" stroke="#1a1a2e" strokeWidth="1.5" fill="none" />
-      {/* Whiskers */}
       <line x1="35" y1="55" x2="48" y2="58" stroke="#1a1a2e" strokeWidth="1" />
       <line x1="35" y1="60" x2="48" y2="60" stroke="#1a1a2e" strokeWidth="1" />
       <line x1="72" y1="58" x2="85" y2="55" stroke="#1a1a2e" strokeWidth="1" />
@@ -223,35 +231,26 @@ function WolfCharacter({ size = 120, isSelected = false }: { size?: number; isSe
           <stop offset="100%" stopColor="#374151" />
         </linearGradient>
       </defs>
-      {/* Body */}
       <ellipse cx="60" cy="88" rx="32" ry="26" fill="url(#wolfFur)" />
-      {/* Head */}
       <ellipse cx="60" cy="45" rx="30" ry="28" fill="url(#wolfFur)" />
-      {/* Snout */}
       <ellipse cx="60" cy="58" rx="18" ry="15" fill="#9CA3AF" />
-      {/* Ears */}
       <polygon points="32,32 22,2 48,22" fill="url(#wolfFur)" />
       <polygon points="88,32 98,2 72,22" fill="url(#wolfFur)" />
       <polygon points="34,28 28,12 44,24" fill="#D1D5DB" />
       <polygon points="86,28 92,12 76,24" fill="#D1D5DB" />
-      {/* Eyes - fierce */}
       <ellipse cx="45" cy="40" rx="8" ry="6" fill="white" />
       <ellipse cx="75" cy="40" rx="8" ry="6" fill="white" />
       <ellipse cx="46" cy="40" rx="4" ry="5" fill="#FCD34D" />
       <ellipse cx="76" cy="40" rx="4" ry="5" fill="#FCD34D" />
       <circle cx="46" cy="40" r="2.5" fill="#1a1a2e" />
       <circle cx="76" cy="40" r="2.5" fill="#1a1a2e" />
-      {/* Eyebrows - angry */}
       <line x1="38" y1="32" x2="52" y2="35" stroke="#374151" strokeWidth="3" strokeLinecap="round" />
       <line x1="82" y1="32" x2="68" y2="35" stroke="#374151" strokeWidth="3" strokeLinecap="round" />
-      {/* Nose */}
       <ellipse cx="60" cy="55" rx="6" ry="5" fill="#1a1a2e" />
-      {/* Mouth - showing teeth */}
       <path d="M 45 65 Q 60 72 75 65" stroke="#1a1a2e" strokeWidth="2" fill="none" />
       <polygon points="50,65 52,70 54,65" fill="white" />
       <polygon points="58,66 60,72 62,66" fill="white" />
       <polygon points="66,65 68,70 70,65" fill="white" />
-      {/* Scar */}
       <path d="M 75 30 L 82 45 L 78 48" stroke="#DC2626" strokeWidth="2" fill="none" />
     </svg>
   );
@@ -266,20 +265,14 @@ function OwlCharacter({ size = 120, isSelected = false }: { size?: number; isSel
           <stop offset="100%" stopColor="#4C1D95" />
         </linearGradient>
       </defs>
-      {/* Body */}
       <ellipse cx="60" cy="82" rx="30" ry="32" fill="url(#owlFeathers)" />
       <ellipse cx="60" cy="85" rx="22" ry="24" fill="#DDD6FE" />
-      {/* Wings */}
       <ellipse cx="25" cy="75" rx="15" ry="25" fill="url(#owlFeathers)" />
       <ellipse cx="95" cy="75" rx="15" ry="25" fill="url(#owlFeathers)" />
-      {/* Head */}
       <circle cx="60" cy="40" r="30" fill="url(#owlFeathers)" />
-      {/* Ear tufts */}
       <polygon points="35,20 28,0 45,15" fill="url(#owlFeathers)" />
       <polygon points="85,20 92,0 75,15" fill="url(#owlFeathers)" />
-      {/* Face disc */}
       <ellipse cx="60" cy="42" rx="24" ry="22" fill="#EDE9FE" />
-      {/* Eyes - big and magical */}
       <circle cx="48" cy="38" r="12" fill="white" stroke="#7C3AED" strokeWidth="2" />
       <circle cx="72" cy="38" r="12" fill="white" stroke="#7C3AED" strokeWidth="2" />
       <circle cx="48" cy="38" r="8" fill="#7C3AED" />
@@ -288,9 +281,7 @@ function OwlCharacter({ size = 120, isSelected = false }: { size?: number; isSel
       <circle cx="72" cy="38" r="4" fill="#1a1a2e" />
       <circle cx="50" cy="36" r="2" fill="white" />
       <circle cx="74" cy="36" r="2" fill="white" />
-      {/* Beak */}
       <polygon points="60,48 55,55 60,62 65,55" fill="#F59E0B" />
-      {/* Magic sparkles */}
       <circle cx="35" cy="25" r="2" fill="#FCD34D" />
       <circle cx="88" cy="28" r="1.5" fill="#FCD34D" />
       <circle cx="40" cy="60" r="1.5" fill="#A78BFA" />
@@ -307,36 +298,27 @@ function RabbitCharacter({ size = 120, isSelected = false }: { size?: number; is
           <stop offset="100%" stopColor="#EC4899" />
         </linearGradient>
       </defs>
-      {/* Body */}
       <ellipse cx="60" cy="88" rx="28" ry="26" fill="url(#rabbitFur)" />
       <ellipse cx="60" cy="90" rx="18" ry="16" fill="#FDF2F8" />
-      {/* Head */}
       <ellipse cx="60" cy="50" rx="26" ry="24" fill="url(#rabbitFur)" />
-      {/* Ears - long */}
       <ellipse cx="42" cy="18" rx="8" ry="25" fill="url(#rabbitFur)" />
       <ellipse cx="78" cy="18" rx="8" ry="25" fill="url(#rabbitFur)" />
       <ellipse cx="42" cy="18" rx="4" ry="20" fill="#FBCFE8" />
       <ellipse cx="78" cy="18" rx="4" ry="20" fill="#FBCFE8" />
-      {/* Face */}
       <ellipse cx="60" cy="55" rx="14" ry="12" fill="#FDF2F8" />
-      {/* Eyes */}
       <ellipse cx="48" cy="48" rx="7" ry="8" fill="white" />
       <ellipse cx="72" cy="48" rx="7" ry="8" fill="white" />
       <ellipse cx="49" cy="49" rx="4" ry="5" fill="#1a1a2e" />
       <ellipse cx="73" cy="49" rx="4" ry="5" fill="#1a1a2e" />
       <circle cx="50" cy="47" r="2" fill="white" />
       <circle cx="74" cy="47" r="2" fill="white" />
-      {/* Nose */}
       <ellipse cx="60" cy="56" rx="4" ry="3" fill="#EC4899" />
-      {/* Mouth */}
       <path d="M 56 60 Q 60 64 64 60" stroke="#EC4899" strokeWidth="1.5" fill="none" />
       <line x1="60" y1="59" x2="60" y2="62" stroke="#EC4899" strokeWidth="1.5" />
-      {/* Whiskers */}
       <line x1="30" y1="55" x2="46" y2="58" stroke="#1a1a2e" strokeWidth="1" />
       <line x1="30" y1="60" x2="46" y2="60" stroke="#1a1a2e" strokeWidth="1" />
       <line x1="74" y1="58" x2="90" y2="55" stroke="#1a1a2e" strokeWidth="1" />
       <line x1="74" y1="60" x2="90" y2="60" stroke="#1a1a2e" strokeWidth="1" />
-      {/* Ninja headband */}
       <rect x="34" y="38" width="52" height="6" fill="#1a1a2e" rx="2" />
       <rect x="80" y="36" width="15" height="4" fill="#1a1a2e" transform="rotate(25 80 36)" />
       <rect x="80" y="42" width="12" height="3" fill="#1a1a2e" transform="rotate(15 80 42)" />
@@ -353,34 +335,25 @@ function DeerCharacter({ size = 120, isSelected = false }: { size?: number; isSe
           <stop offset="100%" stopColor="#92400E" />
         </linearGradient>
       </defs>
-      {/* Body */}
       <ellipse cx="60" cy="90" rx="30" ry="25" fill="url(#deerFur)" />
-      {/* Neck */}
       <rect x="50" y="60" width="20" height="25" fill="url(#deerFur)" rx="5" />
-      {/* Head */}
       <ellipse cx="60" cy="45" rx="22" ry="20" fill="url(#deerFur)" />
-      {/* Antlers */}
       <path d="M 40 30 Q 35 20 30 25 Q 25 15 20 20" stroke="#92400E" strokeWidth="4" fill="none" strokeLinecap="round" />
       <path d="M 35 25 Q 30 18 32 12" stroke="#92400E" strokeWidth="3" fill="none" strokeLinecap="round" />
       <path d="M 80 30 Q 85 20 90 25 Q 95 15 100 20" stroke="#92400E" strokeWidth="4" fill="none" strokeLinecap="round" />
       <path d="M 85 25 Q 90 18 88 12" stroke="#92400E" strokeWidth="3" fill="none" strokeLinecap="round" />
-      {/* Ears */}
       <ellipse cx="35" cy="38" rx="8" ry="12" fill="url(#deerFur)" />
       <ellipse cx="85" cy="38" rx="8" ry="12" fill="url(#deerFur)" />
       <ellipse cx="35" cy="38" rx="4" ry="8" fill="#FDE68A" />
       <ellipse cx="85" cy="38" rx="4" ry="8" fill="#FDE68A" />
-      {/* Face markings */}
       <ellipse cx="60" cy="52" rx="10" ry="12" fill="#FDE68A" />
-      {/* Eyes - gentle */}
       <ellipse cx="48" cy="42" rx="6" ry="7" fill="white" />
       <ellipse cx="72" cy="42" rx="6" ry="7" fill="white" />
       <ellipse cx="49" cy="43" rx="3.5" ry="4.5" fill="#422006" />
       <ellipse cx="73" cy="43" rx="3.5" ry="4.5" fill="#422006" />
       <circle cx="50" cy="41" r="1.5" fill="white" />
       <circle cx="74" cy="41" r="1.5" fill="white" />
-      {/* Nose */}
       <ellipse cx="60" cy="54" rx="5" ry="4" fill="#1a1a2e" />
-      {/* Crown/shield mark */}
       <path d="M 55 30 L 60 25 L 65 30" stroke="#22c55e" strokeWidth="2" fill="none" />
     </svg>
   );
@@ -409,6 +382,9 @@ export default function GameLobby() {
   const [currentTip, setCurrentTip] = useState(0);
   const [isHoveringPlay, setIsHoveringPlay] = useState(false);
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [coins, setCoins] = useState(3750);
 
   const tips = [
     "Tab tusu skorbord gosterir",
@@ -469,214 +445,192 @@ export default function GameLobby() {
     }
   };
 
-  const CharacterComponent = CharacterComponents[selectedCharacter.id];
+  const handlePlay = () => {
+    if (!playerName.trim()) {
+      const input = document.querySelector('input[placeholder="Savasci adin..."]') as HTMLInputElement;
+      input?.focus();
+      return;
+    }
+    setIsPlaying(true);
+    setTimeout(() => {
+      alert(`${playerName} olarak ${selectedCharacter.name} karakteriyle ${selectedServer} sunucusunda oyuna basliyorsunuz!`);
+      setIsPlaying(false);
+    }, 1500);
+  };
 
+  const CharacterComponent = CharacterComponents[selectedCharacter.id];
   const selectedServerData = servers.find(s => s.name === selectedServer);
 
-  return (
-    <div className="min-h-screen bg-[#0a0f0a] text-white relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-green-900/20 via-transparent to-transparent" />
-        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-emerald-900/15 via-transparent to-transparent" />
-        
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-green-500/30 rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Header */}
-      <header className="relative z-20 border-b border-green-900/30 bg-[#0d1410]/90 backdrop-blur-xl">
-        <div className="max-w-[1920px] mx-auto px-4 lg:px-6">
-          {/* Top Bar */}
-          <div className="py-3 flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="relative p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg shadow-green-500/25">
-                <TreePine className="w-8 h-8 text-white" />
+  // Render content based on active tab
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "profil":
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-6 p-6 bg-gradient-to-r from-green-900/30 to-emerald-900/20 rounded-2xl border border-green-700/30">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center">
+                <CharacterComponent size={70} />
               </div>
-              <h1 className="text-2xl lg:text-3xl font-black tracking-tight">
-                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Forest</span>
-                <span className="text-white">Brawl</span>
-                <span className="text-yellow-400">.io</span>
-              </h1>
-            </div>
-
-            {/* Right Controls */}
-            <div className="flex items-center gap-2 lg:gap-3">
-              {/* Online Counter */}
-              <div className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-green-950/50 backdrop-blur rounded-xl border border-green-800/30">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                </span>
-                <span className="text-sm font-semibold text-green-300">{onlinePlayers.toLocaleString()}</span>
-                <span className="text-sm text-gray-400">cevrimici</span>
-              </div>
-
-              <button
-                onClick={() => setSoundEnabled(!soundEnabled)}
-                className="p-2.5 bg-[#1a2420] rounded-xl border border-green-900/30 hover:bg-green-900/30 hover:border-green-700/50 transition-all"
-              >
-                {soundEnabled ? <Volume2 className="w-5 h-5 text-green-400" /> : <VolumeX className="w-5 h-5 text-gray-500" />}
-              </button>
-
-              <button className="p-2.5 bg-[#1a2420] rounded-xl border border-green-900/30 hover:bg-green-900/30 hover:border-green-700/50 transition-all">
-                <Settings className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
-              </button>
-
-              <button className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-[#1a2420] hover:bg-green-900/30 rounded-xl font-semibold transition-all border border-green-900/30 hover:border-green-700/50">
-                <LogIn className="w-4 h-4" />
-                Giris
-              </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black rounded-xl font-bold shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:scale-105 transition-all">
-                <Star className="w-4 h-4" />
-                <span className="hidden sm:inline">Uye Ol</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Season Banner */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-yellow-600/20 via-green-600/10 to-yellow-600/20 px-4 py-3 flex items-center justify-center gap-4 text-sm border-y border-yellow-700/30">
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(250,204,21,0.1),transparent)] animate-[shimmer_3s_infinite]" />
-            <span className="relative px-3 py-1 bg-gradient-to-r from-yellow-500 to-amber-500 text-black rounded-lg font-black text-xs shadow-lg">SEZON 1</span>
-            <span className="relative font-semibold text-yellow-200">Orman Savascisi Sezonu - Ozel kozmetikler & oduller!</span>
-            <span className="relative text-gray-400 hidden md:flex items-center gap-2">
-              <Clock className="w-4 h-4 text-yellow-500" />
-              28 gun kaldi
-            </span>
-          </div>
-
-          {/* Navigation */}
-          <nav className="py-2 flex gap-1 overflow-x-auto scrollbar-hide">
-            {[
-              { id: "oyun", label: "OYUN", icon: Gamepad2 },
-              { id: "profil", label: "PROFIL", icon: Users },
-              { id: "magaza", label: "MAGAZA", icon: Gift },
-              { id: "siralama", label: "SIRALAMA", icon: Trophy },
-              { id: "deriler", label: "DERILER", icon: Sparkles },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-green-900/20"
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="relative z-10 max-w-[1920px] mx-auto p-4 lg:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_340px] gap-4 lg:gap-6">
-          
-          {/* Left Sidebar - Character */}
-          <aside className="bg-gradient-to-b from-[#0d1410] to-[#0a0f0a] backdrop-blur-xl rounded-2xl p-5 border border-green-900/30">
-            <div className="flex items-center gap-2 text-green-400 font-bold mb-4">
-              <Swords className="w-5 h-5" />
-              KARAKTER
-            </div>
-
-            {/* Character Preview */}
-            <div className="relative mb-4">
-              <div className={`aspect-square rounded-2xl bg-gradient-to-br ${getRarityBg(selectedCharacter.rarity)} flex items-center justify-center overflow-hidden border-2 relative`}>
-                {/* Background glow */}
-                <div 
-                  className="absolute inset-0 opacity-30"
-                  style={{ 
-                    background: `radial-gradient(circle at center, ${selectedCharacter.color}40 0%, transparent 70%)` 
-                  }}
-                />
-                <div className="relative z-10 animate-[float_3s_ease-in-out_infinite]">
-                  <CharacterComponent size={140} isSelected={true} />
+              <div className="flex-1">
+                <h3 className="text-2xl font-black text-white">Misafir Oyuncu</h3>
+                <p className="text-gray-400">Hesap olusturmak icin giris yapin</p>
+                <div className="flex gap-4 mt-3">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-green-400">0</div>
+                    <div className="text-xs text-gray-500">Oyun</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-red-400">0</div>
+                    <div className="text-xs text-gray-500">Oldurme</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-yellow-400">0</div>
+                    <div className="text-xs text-gray-500">Rekor</div>
+                  </div>
                 </div>
               </div>
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-[#0d1410] rounded-full border border-green-900/50 shadow-lg">
-                <span className={`text-xs font-bold ${getRarityColor(selectedCharacter.rarity)}`}>
-                  {"★".repeat(selectedCharacter.rarity === "Efsanevi" ? 3 : selectedCharacter.rarity === "Epik" ? 2 : 1)} {selectedCharacter.rarity.toUpperCase()}
-                </span>
-              </div>
+              <button 
+                onClick={() => setShowLoginModal(true)}
+                className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-bold hover:scale-105 transition-all"
+              >
+                Giris Yap
+              </button>
             </div>
-
-            <div className="text-center mb-4">
-              <div className="font-bold text-lg text-white">{selectedCharacter.name}</div>
-              <div className="text-sm text-gray-500">{selectedCharacter.description}</div>
-            </div>
-
-            {/* Stats */}
-            <div className="space-y-2 mb-5 p-3 bg-[#0a0f0a] rounded-xl border border-green-900/20">
-              {[
-                { label: "Guc", value: selectedCharacter.power, color: "from-red-500 to-orange-500", icon: Swords },
-                { label: "Hiz", value: selectedCharacter.speed, color: "from-blue-500 to-cyan-500", icon: Zap },
-                { label: "Savunma", value: selectedCharacter.defense, color: "from-green-500 to-emerald-500", icon: Shield },
-              ].map((stat) => (
-                <div key={stat.label} className="flex items-center gap-3">
-                  <stat.icon className="w-4 h-4 text-gray-500" />
-                  <span className="text-xs text-gray-400 w-16">{stat.label}</span>
-                  <div className="flex-1 h-2 bg-[#1a2420] rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full bg-gradient-to-r ${stat.color} rounded-full transition-all duration-500`}
-                      style={{ width: `${stat.value}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-bold text-white w-8 text-right">{stat.value}</span>
+            <div className="grid grid-cols-3 gap-4">
+              {["Bronz", "Gumus", "Altin"].map((rank, i) => (
+                <div key={rank} className={`p-4 rounded-xl text-center ${i === 0 ? 'bg-amber-900/30 border border-amber-700/30' : 'bg-[#1a2420] border border-green-900/20 opacity-50'}`}>
+                  <Trophy className={`w-10 h-10 mx-auto mb-2 ${i === 0 ? 'text-amber-500' : 'text-gray-600'}`} />
+                  <div className="font-bold text-white">{rank}</div>
+                  <div className="text-xs text-gray-500">{i === 0 ? 'Mevcut' : 'Kilitli'}</div>
                 </div>
               ))}
             </div>
+          </div>
+        );
 
-            {/* Character Grid */}
-            <div className="grid grid-cols-3 gap-2">
-              {characters.map((char) => {
-                const CharComp = CharacterComponents[char.id];
+      case "magaza":
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold text-white">Ozel Teklifler</h3>
+              <div className="flex items-center gap-2 px-4 py-2 bg-yellow-900/30 rounded-xl border border-yellow-700/30">
+                <Coins className="w-5 h-5 text-yellow-400" />
+                <span className="font-bold text-yellow-400">{coins.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {shopItems.map((item) => (
+                <div key={item.id} className={`relative p-5 rounded-2xl border transition-all hover:scale-[1.02] cursor-pointer ${item.popular ? 'bg-gradient-to-br from-yellow-900/40 to-amber-900/30 border-yellow-700/50' : 'bg-[#1a2420] border-green-900/30 hover:border-green-700/50'}`}>
+                  {item.popular && (
+                    <div className="absolute -top-2 -right-2 px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded-lg">POPULER</div>
+                  )}
+                  <item.icon className={`w-12 h-12 mb-3 ${item.popular ? 'text-yellow-400' : 'text-green-400'}`} />
+                  <div className="font-bold text-white">{item.name}</div>
+                  {item.amount && <div className="text-sm text-gray-400">{item.amount} adet</div>}
+                  <div className="mt-3 text-xl font-black text-green-400">{item.price}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case "siralama":
+        return (
+          <div className="space-y-4">
+            <div className="flex gap-2 p-1 bg-[#0a0f0a] rounded-xl">
+              {["daily", "weekly", "all"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setLeaderboardTab(tab)}
+                  className={`flex-1 px-4 py-3 rounded-lg font-bold transition-all ${leaderboardTab === tab ? 'bg-green-600 text-white' : 'text-gray-500 hover:text-white'}`}
+                >
+                  {tab === "daily" ? "GUNLUK" : tab === "weekly" ? "HAFTALIK" : "TUM ZAMANLAR"}
+                </button>
+              ))}
+            </div>
+            <div className="space-y-2">
+              {leaderboardData.map((player) => {
+                const CharComp = CharacterComponents[player.character];
                 return (
-                  <button
-                    key={char.id}
-                    onClick={() => char.unlocked && setSelectedCharacter(char)}
-                    className={`aspect-square rounded-xl flex items-center justify-center relative transition-all hover:scale-105 ${
-                      selectedCharacter.id === char.id
-                        ? `ring-2 ring-green-500 bg-green-900/30 shadow-lg shadow-green-500/20`
-                        : char.unlocked
-                        ? "bg-[#1a2420] hover:bg-green-900/20 border border-green-900/30"
-                        : "bg-[#0d1410] opacity-60 cursor-not-allowed border border-green-900/20"
+                  <div
+                    key={player.rank}
+                    className={`flex items-center gap-4 p-4 rounded-xl transition-all hover:bg-green-900/10 ${
+                      player.rank <= 3 ? 'bg-gradient-to-r from-yellow-900/20 to-transparent border border-yellow-700/20' : 'bg-[#1a2420]/50'
                     }`}
-                    disabled={!char.unlocked}
                   >
-                    <CharComp size={50} isSelected={selectedCharacter.id === char.id} />
-                    {!char.unlocked && (
-                      <div className="absolute inset-0 bg-black/70 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                        <Shield className="w-5 h-5 text-gray-500" />
-                      </div>
-                    )}
-                    {selectedCharacter.id === char.id && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white rounded-full" />
-                      </div>
-                    )}
-                  </button>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${
+                      player.rank === 1 ? 'bg-gradient-to-br from-yellow-500 to-amber-600 text-black' :
+                      player.rank === 2 ? 'bg-gradient-to-br from-gray-400 to-gray-500 text-black' :
+                      player.rank === 3 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-black' :
+                      'bg-[#0d1410] text-gray-500'
+                    }`}>
+                      {player.rank}
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-[#0d1410] flex items-center justify-center">
+                      <CharComp size={38} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-bold text-white text-lg">{player.name}</div>
+                      <div className="text-sm text-gray-500">{player.kills} oldurme</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-black text-green-400">{player.score.toLocaleString()}</div>
+                      <div className="text-xs text-gray-500">puan</div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
-          </aside>
+          </div>
+        );
 
-          {/* Center - Main Panel */}
-          <section className="bg-gradient-to-b from-[#0d1410] to-[#0a0f0a] backdrop-blur-xl rounded-2xl p-6 border border-green-900/30">
+      case "deriler":
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold text-white">Deri Koleksiyonu</h3>
+              <div className="flex items-center gap-2 px-4 py-2 bg-yellow-900/30 rounded-xl border border-yellow-700/30">
+                <Coins className="w-5 h-5 text-yellow-400" />
+                <span className="font-bold text-yellow-400">{coins.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {skins.map((skin) => (
+                <div 
+                  key={skin.id} 
+                  className={`relative p-4 rounded-2xl border transition-all hover:scale-[1.02] cursor-pointer ${
+                    skin.owned 
+                      ? 'bg-gradient-to-br from-green-900/30 to-emerald-900/20 border-green-700/50' 
+                      : 'bg-[#1a2420] border-green-900/30 hover:border-green-700/50'
+                  }`}
+                >
+                  {skin.owned && (
+                    <div className="absolute top-2 right-2">
+                      <Check className="w-5 h-5 text-green-400" />
+                    </div>
+                  )}
+                  <div className={`w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br ${getRarityBg(skin.rarity)} flex items-center justify-center`}>
+                    <Palette className={`w-8 h-8 ${getRarityColor(skin.rarity)}`} />
+                  </div>
+                  <div className="text-center">
+                    <div className="font-bold text-white text-sm">{skin.name}</div>
+                    <div className={`text-xs ${getRarityColor(skin.rarity)}`}>{skin.rarity}</div>
+                    {!skin.owned && (
+                      <div className="mt-2 flex items-center justify-center gap-1 text-yellow-400 font-bold">
+                        <Coins className="w-4 h-4" />
+                        {skin.price.toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      default: // oyun tab
+        return (
+          <>
             {/* Title */}
             <div className="flex items-center gap-4 mb-6">
               <div className="p-4 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl shadow-lg shadow-green-500/20">
@@ -716,7 +670,7 @@ export default function GameLobby() {
                   <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${serverDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {serverDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d1410] border border-green-900/30 rounded-xl overflow-hidden shadow-xl z-50">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d1410] border border-green-900/30 rounded-xl overflow-hidden shadow-xl z-50 animate-fade-in">
                     {servers.map((server) => (
                       <button
                         key={server.id}
@@ -744,7 +698,7 @@ export default function GameLobby() {
 
             {/* Event Banner */}
             <div className="relative overflow-hidden flex items-center justify-between p-4 bg-gradient-to-r from-yellow-900/30 via-yellow-800/20 to-transparent rounded-xl border border-yellow-700/30 mb-5">
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(250,204,21,0.05),transparent)] animate-[shimmer_2s_infinite]" />
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(250,204,21,0.05),transparent)] animate-shimmer" />
               <div className="relative flex items-center gap-4">
                 <div className="p-3 bg-yellow-500/20 rounded-xl border border-yellow-600/30">
                   <Zap className="w-7 h-7 text-yellow-400" />
@@ -762,17 +716,32 @@ export default function GameLobby() {
 
             {/* Play Button */}
             <button 
+              onClick={handlePlay}
               onMouseEnter={() => setIsHoveringPlay(true)}
               onMouseLeave={() => setIsHoveringPlay(false)}
-              className="relative w-full overflow-hidden py-7 rounded-2xl bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-[length:200%_100%] font-black text-4xl text-white shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all hover:scale-[1.02] active:scale-[0.98] mb-5 group"
+              disabled={isPlaying}
+              className={`relative w-full overflow-hidden py-7 rounded-2xl font-black text-4xl text-white shadow-2xl transition-all mb-5 group ${
+                isPlaying 
+                  ? 'bg-gray-700 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-[length:200%_100%] shadow-green-500/30 hover:shadow-green-500/50 hover:scale-[1.02] active:scale-[0.98]'
+              }`}
               style={{
-                animation: isHoveringPlay ? 'none' : 'gradient-shift 3s ease infinite',
+                animation: isHoveringPlay || isPlaying ? 'none' : 'gradient-shift 3s ease infinite',
               }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               <div className="relative flex items-center justify-center gap-4">
-                <Swords className="w-10 h-10" />
-                OYNA!
+                {isPlaying ? (
+                  <>
+                    <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    BAGLANIYOR...
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-10 h-10 fill-current" />
+                    OYNA!
+                  </>
+                )}
               </div>
             </button>
 
@@ -862,6 +831,243 @@ export default function GameLobby() {
                 </div>
               ))}
             </div>
+          </>
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0f0a] text-white relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-green-900/20 via-transparent to-transparent" />
+        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-emerald-900/15 via-transparent to-transparent" />
+        
+        {/* Floating particles */}
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-green-500/30 rounded-full animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 3}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0d1410] rounded-2xl border border-green-900/50 p-6 w-full max-w-md animate-fade-in">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Giris Yap</h3>
+              <button onClick={() => setShowLoginModal(false)} className="p-2 hover:bg-green-900/30 rounded-lg transition-colors">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <input type="email" placeholder="E-posta" className="w-full px-4 py-3 bg-[#1a2420] rounded-xl border border-green-900/30 focus:border-green-500 outline-none text-white placeholder:text-gray-600" />
+              <input type="password" placeholder="Sifre" className="w-full px-4 py-3 bg-[#1a2420] rounded-xl border border-green-900/30 focus:border-green-500 outline-none text-white placeholder:text-gray-600" />
+              <button className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-bold hover:scale-[1.02] transition-all">
+                Giris Yap
+              </button>
+              <div className="text-center text-gray-500 text-sm">
+                Hesabin yok mu? <button className="text-green-400 hover:underline">Kayit Ol</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <header className="relative z-20 border-b border-green-900/30 bg-[#0d1410]/90 backdrop-blur-xl">
+        <div className="max-w-[1920px] mx-auto px-4 lg:px-6">
+          {/* Top Bar */}
+          <div className="py-3 flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="relative p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg shadow-green-500/25">
+                <TreePine className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-2xl lg:text-3xl font-black tracking-tight">
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Forest</span>
+                <span className="text-white">Brawl</span>
+                <span className="text-yellow-400">.io</span>
+              </h1>
+            </div>
+
+            {/* Right Controls */}
+            <div className="flex items-center gap-2 lg:gap-3">
+              {/* Online Counter */}
+              <div className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-green-950/50 backdrop-blur rounded-xl border border-green-800/30">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+                <span className="text-sm font-semibold text-green-300">{onlinePlayers.toLocaleString()}</span>
+                <span className="text-sm text-gray-400">cevrimici</span>
+              </div>
+
+              <button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className="p-2.5 bg-[#1a2420] rounded-xl border border-green-900/30 hover:bg-green-900/30 hover:border-green-700/50 transition-all"
+              >
+                {soundEnabled ? <Volume2 className="w-5 h-5 text-green-400" /> : <VolumeX className="w-5 h-5 text-gray-500" />}
+              </button>
+
+              <button className="p-2.5 bg-[#1a2420] rounded-xl border border-green-900/30 hover:bg-green-900/30 hover:border-green-700/50 transition-all">
+                <Settings className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+              </button>
+
+              <button 
+                onClick={() => setShowLoginModal(true)}
+                className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-[#1a2420] hover:bg-green-900/30 rounded-xl font-semibold transition-all border border-green-900/30 hover:border-green-700/50"
+              >
+                <LogIn className="w-4 h-4" />
+                Giris
+              </button>
+              <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black rounded-xl font-bold shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:scale-105 transition-all">
+                <Star className="w-4 h-4" />
+                <span className="hidden sm:inline">Uye Ol</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Season Banner */}
+          <div className="relative overflow-hidden bg-gradient-to-r from-yellow-600/20 via-green-600/10 to-yellow-600/20 px-4 py-3 flex items-center justify-center gap-4 text-sm border-y border-yellow-700/30">
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(250,204,21,0.1),transparent)] animate-shimmer" />
+            <span className="relative px-3 py-1 bg-gradient-to-r from-yellow-500 to-amber-500 text-black rounded-lg font-black text-xs shadow-lg">SEZON 1</span>
+            <span className="relative font-semibold text-yellow-200">Orman Savascisi Sezonu - Ozel kozmetikler & oduller!</span>
+            <span className="relative text-gray-400 hidden md:flex items-center gap-2">
+              <Clock className="w-4 h-4 text-yellow-500" />
+              28 gun kaldi
+            </span>
+          </div>
+
+          {/* Navigation */}
+          <nav className="py-2 flex gap-1 overflow-x-auto scrollbar-hide">
+            {[
+              { id: "oyun", label: "OYUN", icon: Gamepad2 },
+              { id: "profil", label: "PROFIL", icon: User },
+              { id: "magaza", label: "MAGAZA", icon: ShoppingBag },
+              { id: "siralama", label: "SIRALAMA", icon: Trophy },
+              { id: "deriler", label: "DERILER", icon: Palette },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/25"
+                    : "text-gray-400 hover:text-white hover:bg-green-900/20"
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="relative z-10 max-w-[1920px] mx-auto p-4 lg:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_340px] gap-4 lg:gap-6">
+          
+          {/* Left Sidebar - Character */}
+          <aside className="bg-gradient-to-b from-[#0d1410] to-[#0a0f0a] backdrop-blur-xl rounded-2xl p-5 border border-green-900/30">
+            <div className="flex items-center gap-2 text-green-400 font-bold mb-4">
+              <Swords className="w-5 h-5" />
+              KARAKTER
+            </div>
+
+            {/* Character Preview */}
+            <div className="relative mb-4">
+              <div className={`aspect-square rounded-2xl bg-gradient-to-br ${getRarityBg(selectedCharacter.rarity)} flex items-center justify-center overflow-hidden border-2 relative`}>
+                <div 
+                  className="absolute inset-0 opacity-30"
+                  style={{ 
+                    background: `radial-gradient(circle at center, ${selectedCharacter.color}40 0%, transparent 70%)` 
+                  }}
+                />
+                <div className="relative z-10 animate-float">
+                  <CharacterComponent size={140} isSelected={true} />
+                </div>
+              </div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-[#0d1410] rounded-full border border-green-900/50 shadow-lg">
+                <span className={`text-xs font-bold ${getRarityColor(selectedCharacter.rarity)}`}>
+                  {"★".repeat(selectedCharacter.rarity === "Efsanevi" ? 3 : selectedCharacter.rarity === "Epik" ? 2 : 1)} {selectedCharacter.rarity.toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="text-center mb-4">
+              <div className="font-bold text-lg text-white">{selectedCharacter.name}</div>
+              <div className="text-sm text-gray-500">{selectedCharacter.description}</div>
+            </div>
+
+            {/* Stats */}
+            <div className="space-y-2 mb-5 p-3 bg-[#0a0f0a] rounded-xl border border-green-900/20">
+              {[
+                { label: "Guc", value: selectedCharacter.power, color: "from-red-500 to-orange-500", icon: Swords },
+                { label: "Hiz", value: selectedCharacter.speed, color: "from-blue-500 to-cyan-500", icon: Zap },
+                { label: "Savunma", value: selectedCharacter.defense, color: "from-green-500 to-emerald-500", icon: Shield },
+              ].map((stat) => (
+                <div key={stat.label} className="flex items-center gap-3">
+                  <stat.icon className="w-4 h-4 text-gray-500" />
+                  <span className="text-xs text-gray-400 w-16">{stat.label}</span>
+                  <div className="flex-1 h-2 bg-[#1a2420] rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full bg-gradient-to-r ${stat.color} rounded-full transition-all duration-500`}
+                      style={{ width: `${stat.value}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-white w-8 text-right">{stat.value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Character Grid */}
+            <div className="grid grid-cols-3 gap-2">
+              {characters.map((char) => {
+                const CharComp = CharacterComponents[char.id];
+                return (
+                  <button
+                    key={char.id}
+                    onClick={() => char.unlocked && setSelectedCharacter(char)}
+                    className={`aspect-square rounded-xl flex items-center justify-center relative transition-all hover:scale-105 ${
+                      selectedCharacter.id === char.id
+                        ? `ring-2 ring-green-500 bg-green-900/30 shadow-lg shadow-green-500/20`
+                        : char.unlocked
+                        ? "bg-[#1a2420] hover:bg-green-900/20 border border-green-900/30"
+                        : "bg-[#0d1410] opacity-60 cursor-not-allowed border border-green-900/20"
+                    }`}
+                    disabled={!char.unlocked}
+                  >
+                    <CharComp size={50} isSelected={selectedCharacter.id === char.id} />
+                    {!char.unlocked && (
+                      <div className="absolute inset-0 bg-black/70 rounded-xl flex flex-col items-center justify-center backdrop-blur-sm">
+                        <Lock className="w-4 h-4 text-gray-500" />
+                        <span className="text-xs text-yellow-500 mt-1">{char.price}</span>
+                      </div>
+                    )}
+                    {selectedCharacter.id === char.id && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          {/* Center - Main Panel */}
+          <section className="bg-gradient-to-b from-[#0d1410] to-[#0a0f0a] backdrop-blur-xl rounded-2xl p-6 border border-green-900/30">
+            {renderTabContent()}
           </section>
 
           {/* Right Sidebar */}
@@ -898,7 +1104,7 @@ export default function GameLobby() {
 
               {/* Rankings */}
               <div className="space-y-2">
-                {leaderboardData.map((player) => {
+                {leaderboardData.slice(0, 5).map((player) => {
                   const CharComp = CharacterComponents[player.character];
                   return (
                     <div

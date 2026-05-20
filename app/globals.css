@@ -196,3 +196,8 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Shimmer animation */
+.animate-shimmer {
+  animation: shimmer 3s infinite;
+}
