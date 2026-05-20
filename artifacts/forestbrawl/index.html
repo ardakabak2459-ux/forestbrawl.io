@@ -594,6 +594,12 @@ body>div:not(#app):not(#spawn-overlay):not(#toast):not(#modal-login):not(#modal-
   position:relative;
 }
 .modal-overlay.show .modal-box{transform:scale(1) translateY(0);}
+body.login-page #app{display:none;}
+body.login-page #modal-login{background:radial-gradient(circle at top,rgba(16,34,60,0.95),rgba(4,10,16,0.98));}
+body.login-page #modal-login .modal-box{max-width:520px;min-height:560px;}
+body.login-page #modal-login .modal-close{display:none;}
+body.login-page #modal-login .auth-header{border-radius:0;border-top-left-radius:18px;border-top-right-radius:18px;}
+body.login-page #modal-login .auth-body{padding-bottom:28px;}
 .modal-title{font-size:clamp(17px,4.5vw,22px);font-weight:900;color:var(--gold);text-align:center;margin-bottom:16px;}
 .modal-input{
   width:100%;padding:11px 14px;border-radius:var(--radius-sm);
@@ -4379,6 +4385,7 @@ function setAuthUser(token, user){
   _authToken = token; _authUser = user;
   localStorage.setItem('fb_auth_token', token);
   localStorage.setItem('fb_auth_user', JSON.stringify(user));
+  hideLoginScreen();
   updateAuthUI();
   const profilePanel = document.getElementById('tab-profil');
   if (profilePanel && profilePanel.classList.contains('active')) {
@@ -4396,6 +4403,7 @@ function updateAuthUI(){
   const regBtn    = document.querySelector('.btn-register');
   const logoutBtn = document.getElementById('logout-btn');
   if(_authUser){
+    hideLoginScreen();
     if(loginBtn)  loginBtn.style.display='none';
     const rk = fbRankById(_authUser.rankId??0);
     if(regBtn){
@@ -4470,7 +4478,7 @@ async function doRegister(){
 
 document.addEventListener('DOMContentLoaded',()=>{
   updateAuthUI();
-  if(!_authUser) openModal('login');
+  if(!_authUser) showLoginScreen();
   document.getElementById('login-password')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
   document.getElementById('reg-password')?.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
 });
@@ -5479,6 +5487,7 @@ function openModal(n){
   if(!el) return;
   ['display','opacity','visibility','pointer-events','width','height','max-width','max-height','overflow','clip-path','position','top','left'].forEach(function(p){el.style.removeProperty(p);});
   el.classList.add('show');
+  document.body.classList.toggle('login-page', n==='login');
   if(n==='login') _startAuthPreview('authLoginCanvas');
   else if(n==='register') _startAuthPreview('authRegCanvas');
   else _stopAuthPreview();
@@ -5486,8 +5495,17 @@ function openModal(n){
 function closeModal(n){
   document.getElementById('modal-'+n)?.classList.remove('show');
   if(n==='login'||n==='register') _stopAuthPreview();
+  if(n==='login') document.body.classList.remove('login-page');
 }
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m){m.classList.remove('show');_stopAuthPreview();}}));
+function showLoginScreen(){
+  document.body.classList.add('login-page');
+  openModal('login');
+}
+function hideLoginScreen(){
+  document.body.classList.remove('login-page');
+  closeModal('login');
+}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m){m.classList.remove('show');_stopAuthPreview();document.body.classList.remove('login-page');}}));
 
 // ── Settings ─────────────────────────────────────────────────
 const _settings={sound:true,music:true,particles:true,quality:'medium',public:true};
