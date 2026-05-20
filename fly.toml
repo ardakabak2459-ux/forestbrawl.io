@@ -1,0 +1,29 @@
+app = "forestbrawl"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[build]
+  image = "Dockerfile"
+
+[env]
+  PORT = "3000"
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = "80"
+
+  [[services.ports]]
+    handlers = ["tls"]
+    port = "443"
+
+  [[services.checks]]
+    type = "http"
+    interval = "15s"
+    timeout = "2s"
+    path = "/api/healthz"
+    restart_limit = 0
