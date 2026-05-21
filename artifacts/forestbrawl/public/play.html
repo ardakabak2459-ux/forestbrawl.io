@@ -9687,7 +9687,8 @@ function update(timestamp = 0) {
         color: e.color, outline: e.outline, shape: e.shape || 'circle',
         eyes: e.eyes || 'none', hitFlash: e.hitFlash || 0,
         typeName: e.typeName || 'Düşman', dmg: e.dmg, xpReward: e.xpReward, goldReward: e.goldReward,
-        angle: e.angle || 0
+        angle: e.angle || 0,
+        provoked: !!e.provoked,
       }));
       _socket.emit('host_mobs', mobPacket);
       // Serialize boss for relay
@@ -9696,7 +9697,8 @@ function update(timestamp = 0) {
           x: activeBoss.x, y: activeBoss.y, hp: activeBoss.hp, maxHp: activeBoss.maxHp,
           radius: activeBoss.radius, hitFlash: activeBoss.hitFlash || 0,
           name: activeBoss.name, emoji: activeBoss.emoji || '👹',
-          color: activeBoss.color, outline: activeBoss.outline
+          color: activeBoss.color, outline: activeBoss.outline,
+          provoked: !!activeBoss.provoked,
         });
       } else {
         _socket.emit('host_boss', null);
@@ -11074,15 +11076,36 @@ function initMultiplayer() {
     if (_isHost) pushKillFeed('👑 Bu istemci ev sahibi (host)!');
     // ── Load existing mob states from host ───────────────────────────────
     if (mobs && Array.isArray(mobs) && !_isHost) {
-      enemies.length = 0;
+      const existing = new Map(enemies.map(e => [e._netId, e]));
+      const updated: any[] = [];
       for (const m of mobs) {
-        enemies.push({ _netId: m.id, x: m.x, y: m.y, vx: m.vx||0, vy: m.vy||0,
-          hp: m.hp, maxHp: m.maxHp, radius: m.radius,
-          color: m.color, outline: m.outline, shape: m.shape||'circle',
-          eyes: m.eyes||'none', hitFlash: m.hitFlash||0, typeName: m.typeName||'Düşman',
-          dmg: 0, speed: 0, xpReward: 0, goldReward: 0,
-          provoked: true, lastHit: 0, lastBuildHit: 0, lastResHit: 0, lastHitSwingId: -1 });
+        const prev = existing.get(m.id);
+        if (prev) {
+          prev.x = m.x; prev.y = m.y; prev.vx = m.vx||0; prev.vy = m.vy||0;
+          prev.hp = m.hp; prev.maxHp = m.maxHp; prev.radius = m.radius;
+          prev.color = m.color; prev.outline = m.outline; prev.shape = m.shape||'circle';
+          prev.eyes = m.eyes||'none'; prev.hitFlash = m.hitFlash||0; prev.typeName = m.typeName||'Düşman';
+          prev.dmg = m.dmg ?? prev.dmg ?? 10; prev.xpReward = m.xpReward ?? prev.xpReward ?? 25; prev.goldReward = m.goldReward ?? prev.goldReward ?? 5;
+          prev.angle = m.angle ?? prev.angle ?? 0;
+          prev.provoked = m.provoked ?? prev.provoked ?? false;
+          prev.lastHit = m.lastHit ?? prev.lastHit ?? 0;
+          prev.lastBuildHit = m.lastBuildHit ?? prev.lastBuildHit ?? 0;
+          prev.lastResHit = m.lastResHit ?? prev.lastResHit ?? 0;
+          prev.lastHitSwingId = m.lastHitSwingId ?? prev.lastHitSwingId ?? -1;
+          updated.push(prev);
+        } else {
+          updated.push({ _netId: m.id, x: m.x, y: m.y, vx: m.vx||0, vy: m.vy||0,
+            hp: m.hp, maxHp: m.maxHp, radius: m.radius,
+            color: m.color, outline: m.outline, shape: m.shape||'circle',
+            eyes: m.eyes||'none', hitFlash: m.hitFlash||0, typeName: m.typeName||'Düşman',
+            dmg: m.dmg ?? 10, speed: 0, xpReward: m.xpReward ?? 25, goldReward: m.goldReward ?? 5,
+            provoked: m.provoked ?? false, lastHit: m.lastHit ?? 0, lastBuildHit: m.lastBuildHit ?? 0,
+            lastResHit: m.lastResHit ?? 0, lastHitSwingId: m.lastHitSwingId ?? -1,
+            angle: m.angle ?? 0 });
+        }
       }
+      enemies.length = 0;
+      enemies.push(...updated);
     }
     // ── Load existing boss state from host ───────────────────────────────
     if (boss && !_isHost) {
@@ -11358,17 +11381,36 @@ function initMultiplayer() {
   _socket.on('mob_states', (mobs) => {
     if (_isHost) return;
     if (!Array.isArray(mobs)) return;
-    // Replace enemies with server-provided states from host
-    enemies.length = 0;
+    const existing = new Map(enemies.map(e => [e._netId, e]));
+    const updated = [];
     for (const m of mobs) {
-      enemies.push({ _netId: m.id, x: m.x, y: m.y, vx: m.vx||0, vy: m.vy||0,
-        hp: m.hp, maxHp: m.maxHp, radius: m.radius,
-        color: m.color, outline: m.outline, shape: m.shape||'circle',
-        eyes: m.eyes||'none', hitFlash: m.hitFlash||0, typeName: m.typeName||'Düşman',
-        dmg: m.dmg||10, speed: 0, xpReward: m.xpReward||25, goldReward: m.goldReward||5,
-        provoked: true, lastHit: 0, lastBuildHit: 0, lastResHit: 0, lastHitSwingId: -1,
-        angle: m.angle||0 });
+      const prev = existing.get(m.id);
+      if (prev) {
+        prev.x = m.x; prev.y = m.y; prev.vx = m.vx||0; prev.vy = m.vy||0;
+        prev.hp = m.hp; prev.maxHp = m.maxHp; prev.radius = m.radius;
+        prev.color = m.color; prev.outline = m.outline; prev.shape = m.shape||'circle';
+        prev.eyes = m.eyes||'none'; prev.hitFlash = m.hitFlash||0; prev.typeName = m.typeName||'Düşman';
+        prev.dmg = m.dmg ?? prev.dmg ?? 10; prev.xpReward = m.xpReward ?? prev.xpReward ?? 25; prev.goldReward = m.goldReward ?? prev.goldReward ?? 5;
+        prev.angle = m.angle ?? prev.angle ?? 0;
+        prev.provoked = m.provoked ?? prev.provoked ?? false;
+        prev.lastHit = m.lastHit ?? prev.lastHit ?? 0;
+        prev.lastBuildHit = m.lastBuildHit ?? prev.lastBuildHit ?? 0;
+        prev.lastResHit = m.lastResHit ?? prev.lastResHit ?? 0;
+        prev.lastHitSwingId = m.lastHitSwingId ?? prev.lastHitSwingId ?? -1;
+        updated.push(prev);
+      } else {
+        updated.push({ _netId: m.id, x: m.x, y: m.y, vx: m.vx||0, vy: m.vy||0,
+          hp: m.hp, maxHp: m.maxHp, radius: m.radius,
+          color: m.color, outline: m.outline, shape: m.shape||'circle',
+          eyes: m.eyes||'none', hitFlash: m.hitFlash||0, typeName: m.typeName||'Düşman',
+          dmg: m.dmg ?? 10, speed: 0, xpReward: m.xpReward ?? 25, goldReward: m.goldReward ?? 5,
+          provoked: m.provoked ?? false, lastHit: m.lastHit ?? 0, lastBuildHit: m.lastBuildHit ?? 0,
+          lastResHit: m.lastResHit ?? 0, lastHitSwingId: m.lastHitSwingId ?? -1,
+          angle: m.angle ?? 0 });
+      }
     }
+    enemies.length = 0;
+    enemies.push(...updated);
   });
 
   // ── Boss state from host (non-host only) ─────────────────────────────

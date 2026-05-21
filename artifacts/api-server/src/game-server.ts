@@ -151,13 +151,15 @@ interface MobState {
   id: string; x: number; y: number; hp: number; maxHp: number;
   vx: number; vy: number; shape: string; color: string; outline: string;
   radius: number; eyes: string; hitFlash: number; typeName: string;
+  dmg?: number; xpReward?: number; goldReward?: number;
+  provoked?: boolean; lastHit?: number; lastBuildHit?: number; lastResHit?: number; lastHitSwingId?: number;
 }
 
 // Compact boss state from host
 interface BossState {
   type: string; name: string; emoji: string; x: number; y: number;
   hp: number; maxHp: number; radius: number; color: string; outline: string;
-  angle: number; hitFlash: number; provoked: boolean;
+  angle: number; hitFlash: number; provoked?: boolean;
 }
 
 // ── Party System ───────────────────────────────────────────────────────────
