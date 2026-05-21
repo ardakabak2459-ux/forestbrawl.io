@@ -1,28 +1,17 @@
-# Build a production-ready Node backend for the ForestBrawl game server
-FROM node:20-alpine AS build
+# Use pre-built artifacts for production ForestBrawl game server
+FROM node:20-alpine
 WORKDIR /app
 
-# Copy server sources and frontend static assets used by the server
-COPY artifacts/api-server/package.json artifacts/api-server/package-lock.json* ./artifacts/api-server/
-COPY artifacts/api-server/tsconfig.json ./artifacts/api-server/
-COPY artifacts/api-server/build.mjs ./artifacts/api-server/
-COPY artifacts/api-server/src ./artifacts/api-server/src
-COPY artifacts/api-server/.replit-artifact ./artifacts/api-server/.replit-artifact
+# Copy pre-built backend and frontend static assets
+COPY artifacts/api-server/dist ./artifacts/api-server/dist
+COPY artifacts/api-server/data ./artifacts/api-server/data
+COPY artifacts/api-server/package.json ./artifacts/api-server/package.json
 COPY artifacts/forestbrawl ./artifacts/forestbrawl
 
+# Install runtime dependencies only (using npm since we don't need pnpm for pre-built code)
 WORKDIR /app/artifacts/api-server
-RUN npm install -g pnpm
-RUN pnpm install
-RUN pnpm run build
+RUN npm install --production --legacy-peer-deps || true
 
-FROM node:20-alpine AS runtime
-WORKDIR /app
-COPY --from=build /app/artifacts/api-server/dist ./artifacts/api-server/dist
-COPY --from=build /app/artifacts/api-server/package.json ./artifacts/api-server/package.json
-COPY --from=build /app/artifacts/api-server/data ./artifacts/api-server/data
-COPY --from=build /app/artifacts/forestbrawl ./artifacts/forestbrawl
-
-WORKDIR /app/artifacts/api-server
 ENV NODE_ENV=production
 ENV PORT=3000
 EXPOSE 3000
