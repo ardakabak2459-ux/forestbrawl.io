@@ -11535,7 +11535,7 @@ function _mpUpdate() {
       // Include vx/vy so server can forward velocity for dead-reckoning
       // Include build preview position so other players can see our ghost
       let _emitBX = null, _emitBY = null;
-      if (player.weapon >= 3 && player.isAttacking && _ghostBuildPos) {
+      if (player.weapon >= 3 && _ghostBuildPos) {
         _emitBX = _ghostBuildPos.x; _emitBY = _ghostBuildPos.y;
       }
       _socket.volatile.emit('state', {
@@ -11608,39 +11608,45 @@ function drawOtherPlayers() {
     if (pAcc.a === 'a_backpack') drawPlayerBackpack(ctx, 35);
 
     // ── Weapon + arms ────────────────────────────────────────────────────
+    let swAng = 0;
+    if (p.isAttacking) swAng = Math.sin(globalTime * 0.18) * (Math.PI / 1.8);
+    ctx.save(); ctx.rotate(swAng);
     if (p.weapon === 1 || p.weapon === 2) {
-      let swAng = 0;
-      if (p.isAttacking) swAng = Math.sin(globalTime * 0.18) * (Math.PI / 1.8);
-      ctx.save(); ctx.rotate(swAng);
       if (p.isAttacking) { ctx.shadowColor = p.weapon === 2 ? '#88ccff' : '#ffdd44'; ctx.shadowBlur = 16; }
       ctx.save(); ctx.scale(0.75, 0.75);
       if (p.weapon === 1) drawAxeByTier(ctx, p.axeTier ?? 0, globalTime);
       else                drawSwordByTier(ctx, p.swordTier ?? 0, globalTime);
       ctx.restore();
       ctx.shadowBlur = 0;
-      // Detailed arms matching local player style
-      const armCol = SKIN_ARM_COLORS[p.skin] || '#c4966a';
-      const _toHex2 = (v) => Math.round(Math.min(255,Math.max(0,v))).toString(16).padStart(2,'0');
-      const armDark2 = armCol.startsWith('#')
-        ? '#' + [0,1,2].map(i => _toHex2(parseInt(armCol.slice(1+i*2,3+i*2),16)*0.7)).join('')
-        : armCol;
-      for (const [ay, sign] of [[-13,-1],[20,1]]) {
-        ctx.save(); ctx.translate(30, ay);
-        const ag = ctx.createRadialGradient(-4,sign*-4,0,0,0,16);
-        ag.addColorStop(0, armCol); ag.addColorStop(0.55, armCol); ag.addColorStop(1, armDark2);
-        ctx.fillStyle = ag; ctx.strokeStyle = '#000'; ctx.lineWidth = 4.5;
-        ctx.beginPath(); ctx.ellipse(6,0,18,13,0.18*sign,0,Math.PI*2); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,0.22)';
-        ctx.beginPath(); ctx.ellipse(2,-3*sign,7,4,0.2*sign,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
-        for(const fx of [8,14,20]){ ctx.beginPath();ctx.moveTo(fx,-8);ctx.lineTo(fx,8);ctx.stroke(); }
-        ctx.restore();
-      }
-      ctx.restore(); // undo swAng
     } else if (p.weapon >= 3) {
-      ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('🔨', 52, 0);
+      // Remote player build tool preview
+      ctx.save();
+      ctx.translate(20, -6);
+      ctx.fillStyle = '#6b4a29';
+      ctx.fillRect(0, -6, 32, 12);
+      ctx.fillStyle = '#c8c8c8';
+      ctx.fillRect(28, -10, 12, 20);
+      ctx.restore();
     }
+    // Detailed arms matching local player style (shown for all weapons including build tools)
+    const armCol = SKIN_ARM_COLORS[p.skin] || '#c4966a';
+    const _toHex2 = (v) => Math.round(Math.min(255,Math.max(0,v))).toString(16).padStart(2,'0');
+    const armDark2 = armCol.startsWith('#')
+      ? '#' + [0,1,2].map(i => _toHex2(parseInt(armCol.slice(1+i*2,3+i*2),16)*0.7)).join('')
+      : armCol;
+    for (const [ay, sign] of [[-13,-1],[20,1]]) {
+      ctx.save(); ctx.translate(30, ay);
+      const ag = ctx.createRadialGradient(-4,sign*-4,0,0,0,16);
+      ag.addColorStop(0, armCol); ag.addColorStop(0.55, armCol); ag.addColorStop(1, armDark2);
+      ctx.fillStyle = ag; ctx.strokeStyle = '#000'; ctx.lineWidth = 4.5;
+      ctx.beginPath(); ctx.ellipse(6,0,18,13,0.18*sign,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.beginPath(); ctx.ellipse(2,-3*sign,7,4,0.2*sign,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
+      for(const fx of [8,14,20]){ ctx.beginPath();ctx.moveTo(fx,-8);ctx.lineTo(fx,8);ctx.stroke(); }
+      ctx.restore();
+    }
+    ctx.restore();
 
     // ── Body (on top of arms/weapon) ─────────────────────────────────────
     drawSkinBody(ctx, 35, p.skin || 'default', globalTime, fl);
