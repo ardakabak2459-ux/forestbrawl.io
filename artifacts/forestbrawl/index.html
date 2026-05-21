@@ -4478,7 +4478,7 @@ async function doRegister(){
 
 document.addEventListener('DOMContentLoaded',()=>{
   updateAuthUI();
-  if(!_authUser) showLoginScreen();
+  hideLoginScreen();
   document.getElementById('login-password')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
   document.getElementById('reg-password')?.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
 });
