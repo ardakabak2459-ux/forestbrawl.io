@@ -21,10 +21,3 @@ processes = []
   [[services.ports]]
     handlers = ["tls"]
     port = "443"
-
-  [[services.checks]]
-    type = "http"
-    interval = "15s"
-    timeout = "2s"
-    path = "/api/healthz"
-    restart_limit = 0
