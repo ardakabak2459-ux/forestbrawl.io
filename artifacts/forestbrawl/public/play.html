@@ -2452,6 +2452,7 @@ let _ping = 0;
 let _pingTimer = 0;
 let _stateTimer = 0;
 let _lastEmitX = 0, _lastEmitY = 0, _lastEmitAngle = 0, _lastEmitHp = 100, _lastEmitScore = 0;
+let _lastEmitBuildX = null, _lastEmitBuildY = null;
 let _chatInput = null;
 let _isDying = false; // guard against double-die (pvp_hit + pvp_killed race)
 
@@ -11520,7 +11521,8 @@ function _mpUpdate() {
   if (_isDying) return; // dead — don't send stale positions
 
   // Emit every 2 frames when moving (~30fps), every 3 frames idle (saves bandwidth)
-  const _moving = Math.abs(player.vx||0) > 0.3 || Math.abs(player.vy||0) > 0.3 || player.isAttacking;
+  const _buildPreviewing = player.weapon >= 3 && _ghostBuildPos;
+  const _moving = Math.abs(player.vx||0) > 0.3 || Math.abs(player.vy||0) > 0.3 || player.isAttacking || _buildPreviewing;
   _stateTimer++;
   if (_stateTimer >= (_moving ? 2 : 3)) {
     _stateTimer = 0;
@@ -11529,15 +11531,19 @@ function _mpUpdate() {
     const da = Math.abs(player.angle - _lastEmitAngle);
     const dhp = Math.abs(player.hp - _lastEmitHp);
     const dsc = Math.abs((player.score || 0) - _lastEmitScore);
-    if (dx > 0.4 || dy > 0.4 || da > 0.006 || dhp > 0.5 || dsc >= 10 || player.isAttacking) {
+    const buildXChanged = _buildPreviewing && (_ghostBuildPos.x !== _lastEmitBuildX || _ghostBuildPos.y !== _lastEmitBuildY);
+    const buildCleared = !_buildPreviewing && (_lastEmitBuildX !== null || _lastEmitBuildY !== null);
+    if (dx > 0.4 || dy > 0.4 || da > 0.006 || dhp > 0.5 || dsc >= 10 || player.isAttacking || buildXChanged || buildCleared) {
       _lastEmitX = player.x; _lastEmitY = player.y;
       _lastEmitAngle = player.angle; _lastEmitHp = player.hp; _lastEmitScore = player.score || 0;
       // Include vx/vy so server can forward velocity for dead-reckoning
       // Include build preview position so other players can see our ghost
       let _emitBX = null, _emitBY = null;
-      if (player.weapon >= 3 && _ghostBuildPos) {
+      if (_buildPreviewing) {
         _emitBX = _ghostBuildPos.x; _emitBY = _ghostBuildPos.y;
       }
+      _lastEmitBuildX = _emitBX;
+      _lastEmitBuildY = _emitBY;
       _socket.volatile.emit('state', {
         x: player.x, y: player.y, angle: player.angle,
         vx: player.vx || 0, vy: player.vy || 0,
