@@ -1063,9 +1063,9 @@ body.login-page #modal-login .auth-body{padding-bottom:28px;}
   }
   .nav-btn .nav-icon{font-size:10px;}
 
-  /* ── Main content: side-by-side (center + right) ── */
+  /* ── Main content: single column on tight landscape phones ── */
   #main-content{
-    flex-direction:row;
+    flex-direction:column;
     flex:1;min-height:0;
     gap:4px;
     padding:3px 5px max(env(safe-area-inset-bottom,0px),3px);
@@ -1075,6 +1075,7 @@ body.login-page #modal-login .auth-body{padding-bottom:28px;}
 
   /* ── Left panel: hidden ── */
   #panel-left{display:none!important;}
+  #panel-right{display:none!important;}
 
   /* ── Center panel: proper scroll chain ── */
   #panel-center{
